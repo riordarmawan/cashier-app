@@ -1,0 +1,94 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #ffdf58;
+}
+
+.nav-brand {
+  font-family: 'Viga', sans-serif;
+}
+
+.nav-link {
+  margin-left: auto;
+  font-weight: 800;
+}
+
+.nav-active::after {
+  content: '';
+  display: block;
+  border-bottom: 3px solid black;
+  width: 50%;
+  margin: auto;
+}
+
+/* Hero */
+.hero-img {
+  background-image: url(../public/assets/img/cover/cover.jpg);
+  background-size: cover;
+  height: 70vh;
+  margin-top: -75px;
+}
+
+.hero-img h1 {
+  margin: auto;
+}
+
+/* Menu */
+.list-menu:hover {
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.title strong {
+  text-align: right;
+}
+
+.daftar-menu {
+  margin: auto;
+}
+
+.overflow-auto::-webkit-scrollbar {
+  display: none;
+}
+
+/* Modal Cart */
+.btn-plus {
+  margin-left: 5px;
+}
+
+/* Tampilan Tablet */
+@media only screen and (max-height: 1000px) {
+  .checkout {
+    height: 650px;
+  }
+
+  .menu {
+    height: 800px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 575.98px) {
+  .hero-img {
+    height: 30vh;
+    margin-top: -75px;
+  }
+
+  .checkout {
+    height: 350px;
+  }
+
+  .bayar {
+    margin-top: 30px;
+  }
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

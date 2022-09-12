@@ -1,0 +1,256 @@
+# import font dari google font
+1. copy link lalu simpan di folder public/index.html dan paste 
+2. masuk ke file index.css dan ubah font family-nya
+
+# Buat Desain. jadi disini ingin buat 2 kolom, yg berisi menu dan pembayarannya
+1. bikin file Menu.js di folder components (note: md={8} adalah lebar dari column-nya)
+2. bikin file Checkout.js di folder components (note: md={4} adalah lebar dari column-nya)
+3. lalu panggil file menu dan checkout di App.js dengan menggunkan <Row>
+4. bikin file index.js di folder components yang isinya import navbar, hero image, menu dan checkout, dan nanti dipanggil di App.js agar menjadi 1 baris code saja
+
+# Panggil API
+1. jalankan db.json, buka terminal dan ketik json-server --watch db.json --port=3001 (diganti 3001, karna yg 3000 sudah digunakan pada react)
+2. pada file App.js default-nya menggunakan functional component, nah kita ganti dengan class Component karna nanti kita membutuhkan state dan props
+3. buat constructur(props) {}
+4. bikin state yg namanya menus dengan array kosong [], nanti product yg ada di db.json mau dimasukkan kedalam menus: []
+5. bikin folder di dalam src dengan nama utils dan buat file constants.js, nah disini kita menyimpan export URL yang ada di dalam backend-nya dalam kasus ini yaitu port 3001
+6. panggil constants.js di App.js 
+7. panggil Axios (sebelumnya sudah install terlebih dahulu axios-nya)
+8. buat componentDidMount(){}, yang berfungsi untuk memanggil API
+9. buka axios reactjs di google, pilih step 2 dan copy codenya ke dalam componentDidMount, setelah itu URL-nya ganti dengan http://localhost:3001/ dan tambahkan tanda (+) "product" karna kita ingin mengambil API product.
+10. kemudian response-nya (res) dan state-nya diubah mejadi menus (dimasukkan ke dalam menus)
+11. buat console.log dibawahnya render() untuk cek datanya sudah masuk atau blm
+note: jadi di dalam res itu ada object yg berisi 4 file, dan kita ingin mengambil file data saja (res.data)
+
+---- jIKA DATA API SUDAH MASUK, MAKA LANGKAH SELANJUTNYA MENAMPILKAN DATANYA PADA HALAMAN HTML ---
+1. buat variable dulu dibawahnya render() pada file App.js
+2. buat Row dibawahnya <Menu/> dan map menus-nya
+3. buat file Menus.js di folder components dengan format rafce
+4. panggil menus-nya di App.js <Menus />
+5. oper dengan syntax menu={menu}, dan berikan key={menu.id} agar tdk error
+6. panggil menu di file Menus.js
+7. membuat tampilan cards dari react bootstrap
+8. buat cards-nya rapih dengan cara <Col md={4} xs={6}/>, jadi cards-nya akan rapih ke samping saat layar besar ada 4 dan layar kecil ada 2 per baris-nya
+9. card title di isi dengan {menu.nama}, karna kita ambil dari API-nya
+10. card text-nya isi denga {menu.harga}, di angka pada harga itu tidak ada (.) jadi kita ingin menambahkan titik dengan cara. buat file util.js di folder utils dan buat function yang isinya (export const numberWithCommas=(x) => {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+})
+11. import utils di Menus.js
+12. masukkan gambar yang sudah ada di folder assets dengan cara src={"assets/img/"+menu.category.nama.toLowerCase()+"/"+menu.gambar} . jadi menu.category.nama itu kita mau ambil category yg didalamnya ada nama dan di masukkan ke dalam menu, toLowerCase : agar hurufnya besar di depan, +"/"+menu.gambar : mengapa pake "/" karna kita ingin ambil gambar isinya ada diluar atau bukan di dalam Array category  
+
+--- MENAMPILKAN PRODUK BEDASARKAN KATEGORI ---
+1. install icon di fontawesome reactjs
+2. masuk ke file NavbarComponent.js buat constructor dengan rconst
+3. isi this.state-nya dengan categories:[],
+4. buat componentDidMount dan isikan dengan API-nya (axios.get). import juga URL_API dan axios.
+5. kemudian const-nya diubah jadi categories dan this.setState-nya diubah mejadi categories (dimasukkan ke dalam categories)
+6. console.log dibawahnya render(), untuk cek apakah api-nya sudah connect
+7. buat variabel const categories
+8. categories-nya di mapping
+9. kita ingin memasukkan icon yg sudah di install sebelumnya, import icon-nya terlebih dahulu
+10. buat const Icon untuk simpan icon-nya
+11. panggil const Icon di tempat yg kita mau gunakan dengan cara <Icons icon={category.icon}/>, dlm kasus ini saya mau memanggil di bagian <Nav.Link/>
+
+--- MEMBUAT NAV-NYA BISA DI KLIK, KETIKA KLIK MAKANAN MAKA AKAN TAMPIL MENU MAKANAN SAJA DLL ---
+1. buka App.js dan buat variabel dibawahnya menus: [] dengan nama menuDipilih: 'Makanan', kita atur default-nya yg dipilih itu menu Makanan. nanti menuDipilih ini akan ganti2 sesuai user klik pilih yg mana.
+2. buat arrow function dibawahnya componentDidMount dengan nama changeMenu yang megoper value
+3. this.setState masukan menuDipilih: value untuk diganti dengan value
+4. kita ganti juga menus-nya jadi kosong lagi, menus: []
+- pada  axios.get(API_URL+"products") itu sebenarnya hanya mengambil data products-nya saja, untuk menampilkan menu makanan saja kita perlu akses json server dan pilih products dan ganti URL dengan http://localhost:3001/products?category.nama=Makanan, jika ingin menampilkan menu minaman saja maka ganti URL nya menjadi http://localhost:3001/products?category.nama=Minuman dst.
+5. copy URL-nya (products?category.nama=Minuman) tidak usah sama localhost-nya
+6. ke componentDidMount dan paste link-nya ke axios.get(API_URL+"products") ubah "products" menjadi "products?category.nama="+this.state.menuDipilih" sehingga code-nya menjadi seperti ini axios.get(API_URL+"products?category.nama="+this.state.menuDipilih")
+7. cek apakah sudah berhasil, jika berhasil maka keluar default-nya makanan aja, karna kita set-nya menuDipilih: 'Makanan'
+-- DAN BERHASIL --
+8. selanjutnya copy isi componentDidMount-nya dan paste ke changeMenu, dan this.state.menuDipilih ganti jadi this.state.value
+9. changeMenu-nya kita oper ke NavbarComponent.js, dengan cara ke render() lalu pilih <NavbarComponent/> dan isi di dalmnya changeMenu={this.changeMenu}
+10. oper juga state menuDipilih dengan cara isi di dalam <NavbarComponent/>, namun sebelumnya taro dulu menuDipilih di dalam const
+11. setelah sudah di oper maka selanjutnya kita pasnggil di NavbarComponent.js, cara manggil-nya masukan dulu di dalam const changeMenu, menuDipilih lalu kita pilih <Nav /> dan masukkan onClick={() => changeMenu(category.nama) di dalamnya.
+-- BERHASIL, NAV-NYA BISA DI KLIK DAN BEJALAN --
+
+--- KITA BUAT HALAMAN AKTIF, JADI MISAL HALAMAN MAKANAN YG DI TAMPILKAN MANA NAV MAKANAN AKAN BERUBAH WARNA ---
+1. buat className di <Nav.Link /> dan isi dengan sytax className={menuDipilih === category.nama && "nav-active"}
+2. atur class nav-active di index.css dan atur warna aktifnya
+
+--- BUAT KERANJANG, JADI KETIKA MAKANAN DIPILIH MAKAN AKAN MASUK KE HALAMAN CHECKOUT ---
+1. buat state keranjangs: [] di constructor(props) 
+note: state-nya harus sama namanya dengan yg di API, dalam kasus ini keranjangs
+2. buat method dibawahnya changeMenu namanya addToCart
+3. addToCart kita oper di <Menus />
+4. panggil addToCart ke cosnt Menus di Menus.js
+5. kasih onClick di <Card/> nya, dan yang dioper itu menu-nya
+6. cek dengan console.log di addToCart pada file App.js
+-- Jika sudah berhasil maka kita akan masukkan ke database --
+7. dalam API-nya ada keranjangs, maka kita mau masukan datanya ke dalam keranjangs
+8. copy axios.get ke dalam method addToCart, ganti .get dengan .post . ubah link-nya memjadi (API_URL+"keranjangs")
+9. ganti isi res-nya dengan sweetalert yg sudah di install
+10. import juga swal-nya
+-- .post-nya ini kita blm ngirim apa2, harusnya kirim data ke value-nya terlebih dahulu, cara kirim datanya yaitu:
+11. buat const baru namanya cart dibawahnya addToCarts yang berisi jumlah, total_harga dan product
+-- jadi nanti jumlah, total_harga dan product akan tersimpan di API keranjangs
+12. cart-nya di simpan di .post(API_URL+"keranjangs", cart)
+13. di bagian text tambahkan cart.product.nama, jadi akan seperti ini text: "Pesanan Masuk ke Halaman Checkout!"+cart.product.nama,
+-- jadi kita buat const cart dan disimpan di keranjang, jika sukses maka akan keluar sweetalert-nya (SUKSES)
+-- sampe sini ketika di klik menu yg lain di API-nya masuk menu baru namu dengan jumlah 1, nah seharus-nya jika di klik menu baru maka jumlah-nya bertambah menjadi 2. nah caranya yaitu, sebelum disimpan kita .get dulu :
+14. copy axios.get(API_URL+"products?category.nama="+value) ke dalam method addToCarts
+15  nah yg kita get itu .get(API_URL+"keranjangs?product.id="+value), jadi di cek dulu product id-nya ada ga yg sama dengan value-nya, jika ada maka tidak perlu menambah baru tapi update yang sudah ada saja, ketik di belakang value-nya jadi value.id
+-- jika berhasil maka cek di res-nya menggunakan if(res.data.legth === 0) kalo 0 berarti tidak ada maka cut const cart dan masukan di dalam if-nya, jika ada datanya (else), maka kita buat cart atau copy aja const cart, tapi jumlah-nya bukan 1 jadi kalo ada kita ambil datanya dengan cara jumlah: res.data[0].jumlah+1, sama juga yg total_harga res.data[0].total_harga+value.harga. nah jika berhasil kita menggunakan metode-nya namanya .put yaitu update yg sudah ada caranya copas aja axios-nya lalu paste dibawahnya else dan ganti .post dengan .put
+-- Cek apakah berhasil atau tidak --
+
+-- Jika berhasil kemudian kita mau tampilkan datanya ke halaman Checkout-nya, caranya yaitu :  --
+16. buka App.js, yang pertama gunakan state keranjangs: [], di componentDidMount kita axios.get atau copy saja axios yg sudh ada lau isikan axios.get(API_URL+"keranjangs"), ganti const-nya menjadi keranjangs (const keranjangs), ganti isi this.setState juga menjadi keranjangs
+17. simpan kerangjangs di const bawah-nya render(), di halaman App.js
+18. lalu oper ke halaman Checkout dengan cara <Checkout kerangjangs={kerangjangs} >
+19. buka Checkout.js, panggil kerangjangs dengan cara menuliskan const {kerangjangs} = this.props dibawahnya render()
+20. buat list, cari di bootstrap
+21. cek dulu dengan cara {keranjangs.legth !== 0} dibacanya: jika di keranjangs-nya tidak sama dengan 0 (ada isinya) maka jalankan <ListGroup.Item/>
+22. lalu mapping dengan cara {keranjangs.map((listKeranjang) => (
+23. lalu <ListGroup.Item/> dengan {listKeranjang.product.nama}
+-- sampe sini bakal tampil makanan yg dipilih di halaman checkout, tetapi kita juga ingin menampilkan beserta dengan harga-nya, caranya yaitu --
+24. buat <Row> dan isi-nya 3 <Col> yg masing2 Col-nya akan berisi jumlah, makanan yg dipilih dan harga
+-- berhasil
+-- tetapi saat kita klik menu lainnya di halaman checkout-nya tidak langsung terupdate jumlah-nya, jadi harus di refresh dulu baru update. untuk menangani auto update kita ke App.js dulu
+25. buat function componentDidUpdate(prevState), jadi fungsi ini akan terus run dan cek apakah ada perubahan di state-nya
+26. buat if yang isinya if(this.state.keranjangs !== prevState.keranjangs), jika ada perubahan atau tidak == maka akan jalankan .axios.get
+27. dibawah if isikan axios.get(API_URL + "keranjangs") atau copy aja axios-nya dari componentDidMount
+-- Berhasil, setelah klik pesanan baru maka jumlah makanan-nya auto update
+-- namun sampe sini terdapat masalah yaitu terjadi infinite loop pada db.json, untuk mengatasi itu ada di step selanjut-nya
+
+-- STEP SELANJUTNYA KITA MAU BUAT DI HALAMAN KERANJANG-NYA ADA TOTAL BAYAR DI BAGIAN BAWAH. NANTI DI DIBWAH-NYA AKAN ADA TOTAL PEMBAYARAN DAN AKSI PESAN, KETIKA AKSI PESAN DI KLIK MAKA AKAN PINDAH HALAMAN KE HALAMAN SUKSES DAN NANTI HALAMAN KERANJANG-NYA AKAN HILANG.
+-- DI STEP SEBELUMNYA KITA HANYA BERMAIN DI SATU HALAMAN / HALAMAN UTAMA SAJA, DI STEP INI KITA INGIN BERMAIN DI HALAMAN YG LAIN. untuk itu cara yang pertama adalah install terlebih dahulu react router DOM.
+1. ketik di google https://reactrouter.com/, lalu copy npm install dan jalankan di folder store-app
+2. jika sudah install lalu jalankan npm start 
+3. selanjutnya buat folder di dalam src dengan nama pages
+4. di dalam folder pages buat file index.js, Home.js dan Success.js(rcc)
+5. di Success.js isikan <h2> dulu sementara
+6. di index.js isikan import Home.js-nya dan Success.js-nya
+7. buka App.js cut semua isinya dan pindahkan ke Home.js
+8. buka App.js dan buat function component (rcc) dan import, import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+import juga NavbarComponent
+import juga Home dan Success
+note: import diatas bis di copy di react router dom V5
+9. selamjutnya isikan return-nya dengan <Router/> dan isi juga NavbarComponent, <Switch/> dan <Route/>
+10. buka Home.js dan hapus aja <NavbarComponent/> dan <div className="App"> karna sudah dipanggil di App.js
+-- sampe sini coba cek akses halaman sukse dengan cara localhost/300/success
+-- setelah di cek blm muncul sukses karna belum di masukan exact di <Route/>
+-- berhasil
+11. selanjutnya desain tampilan Success.js
+12. pada bagian button beri Link, fungsi Link untuk kembali ke halaman yg diinginkan, di dalam Link ini sebenarnya ada url untuk kembali ke halaman yg diinginkan dan itu sudah auto oleh react router dom. <button as={Link} to="/" /> jadi button-nya kita aliaskan menjadi link dan to="/" sebagai halaman awal
+-- sampe sini blm berhasil 
+-- agar berhasil tambahkan <BrowserRouter forceRefresh={true} /> diatas-nya <Button>
+
+-- BUAT TOTAL HARGA DAN TOMBOL UNTUK PEMBAYARAN
+1. buat file di folder component dengan nama TotalBayar.js (rcc)
+2. panggil TotalBayar di file checkout.js, lalu oper keranjangs <TotalBayar kerangjangs={kerangjangs} />
+-- berhasil total bayar muncul dihalaman checkout, tapi posisi nya mau di pindah ke paling bawah dengan cara
+3. ke TotalBayar.js kasih div-nya className="fixed-bottom"
+-- tapi sampe sini malah di sebalah kiri posisinya, yg di mau posisinya di bawah halaman checkout-nya, caranya 
+4. buat Row dan Col dan Col-nya isi md={{ span: 3, offset: 9 }}, dan berika className px-4, px itu adalah padding
+-- selanjutnya mau menjumlahkan total Harga dengan cara map.reduce
+5. search di google map reduce js dan cari yang freecodecamp, cari Reduce ke bagian example copy codenya dari const, lalu paste di TotalBayar.js, ganti const-nya menjadi const totalBayar = this.props.keranjangs.reduce(function (result, item), dan return-nya result = item.total_harga karna yang mau kita jumlahkan adalah total_harga
+-- berhasil
+6. selanjutnya buat button untuk bayar di bawahnya h4
+-- selanjutnya kita buat, ketika tombol bayar di klik maka akan ke halaman sukses dan pesanan yang ada di halaman checkout auto ke hapus, dan pesanan-nya akan tersimpan auto ke API-nya. caranya yaitu:
+7. ke halaman TotalBayar.js di bagian button bayar-nya buat onClick dan panggil submitTotalBayar dan ngirim parameter totalBayar, nanti kita akan buat method submitTotalBayar
+8. bikin method submitTotalBayar dibawahnya export default class
+9. di dalam submitTotalBayar bikin const pesanan, nanti pesanan ini yang akan masuk datanya de API pesanans.
+10. ketikan axios.post(API_URL+"pesanans",pesanan).then((res) => ). nah pesanan itu yang akan di post ke API-nya, .then berfungsi untuk memasukan ke dalam API.
+11. didalam axios-nya isi kan this.props.history.push('/success') fungsinya jika sukses maka halamannya akan berpindah ke halaman success, masalah disni pada halaman TotalBayar.js tidak memiliki history, yang memiliki history itu component Home dan Success di halaman App.js untuk itu kita harus oper dari Home ke total bayar dengan cara:
+12. ke halaman Home.js dan oper dengan cara {...this.props} di bagian <Checkout/>
+13. buka halaman Checkout.js dan ketikan juga {...this.props} di bagian <TotalBayar/>
+-- Cek apakah berhasil, belum berhasil
+-- agar berhasil tambahkan <BrowserRouter forceRefresh={true} /> diatas-nya <Button>
+-- cek lagi, berhasil
+-- sampe sini pas kembali lagi ke menu utama, semua pesanan di halaman checkout-nya masih ada yg kita inginkan ketika balik ke halaman utama maka pesana yg ada di halaman checkout-nya langsung auto ke hapus. bagaimana caranya:
+14. ke halaman Success.js dan buat componentDidMount yang isinya axios.get keranjangs, syntax-nya copy aja di halaman Home.js cari axios.get(API_URL + "kerangjangs")
+15. this.state-nya dan kita mau mapping dengan cara kerangjangs.map(function(item))
+-- kenapa di mapping karna di JSON Placeholder ini ga ada fasilitas delete semua, hanya ada fasilitas delete setiap item maka kita harus manggil semua kerangjangs-nya kemudian di mapping dan dihapus satu per satu. langkah selanjutnya :
+16. ketikan return axios.delete(API_URL+"kerangjangs/"item.id), .then artinya ketika berhasil, .catch artinya ketika gagal
+-- cek apakah berhasil, berhasil
+
+-- SELANJUTNYA BUAT AGAR CHECKOUT-NYA BISA DI EDIT, NANTI BUAT MODAL DAN DI DALAMNYA ITU BISA EDIT MAUPUN HAPUS PESANAN. CARANYA YAITU:
+1. ke Checkout.js bikin constructor di atasnya render()
+2. buat handleShow(listKeranjang) untuk menampilkan modal-nya, listKeranjang dari map yg diinisialisaskan, showModal-nya true karna biar tampil
+3. buat handleClose, showModal-nya false agar bisa di tutup
+4. di <Row/> buat onClick this.handleShow yang menerima parameter listKeranjang, nanti listKeranjang-nya masuk ke handleShow dan disimpan ke keranjangDetail
+5. buat file ModalCart.js (rafce) di folder component dan isikan modal-nya, modal-nya copy aja dari react bootstrap
+6. panggil showModal dan handleClose di const ModalCart
+7. ke Checkout.js dan panggil ModalCart di atas-nya </ListGroup>, lalu oper handleClose dan state semuanya {...this.state}
+-- cek apakah berhasil, berhasil
+-- selanjutnya buat modalnya isi-nya sesuai yang telah dipesan
+8. panggil keranjangDetail di ModalCart.js. karna pesanan yg sudah di pesan sebelumnya sudah masuk di keranjangDetail jadi mau dipergunakan untuk menampilkan datanya di Modal-nya
+9. bikin if, jadi jika ada keranjangDetail-nya ada maka return modal-nya yang ada isi-nya, atau jika tidak ada maka tampilkan modal-nya yg berisi keterangan KOSONG 
+9. isi di dalam <Modal.Title> menjadi {keranjangDetail.product.nama}, isi juga harganya dengan numberWithCommas
+-- cek apakah berhasil, berhasil
+10. buat form di <Modal.Body/>, copy aja form-nya di react bootstrap
+11. paste di <Modal.Body/>
+-- cek, berhasil
+-- selanjutnya di dalam modal-nya dapat menambhkan jumlah dan terdapat keterangan juga, dan total_harga juga akan di tampilkan.
+12. buat <p> di bawahnya <Form.Label/> dan masukan total harganya dengan menuliskan  Rp. {numberWithCommas(keranjangDetail.product.harga)}
+-- cek apakah berhasil, berhasil
+-- selanjutnya buat jumlah, nanti jumlahnya itu bisa di edit atau menambah jumlah pesanannya
+13. buat <From.Group />, copy aja lalu ditambahkan dengan button dan berikan icon plus dan minus dari fontawesome
+14. di bagian <Form.Control /> tambahkan value={keterangan} lalu keterangan panggil di const ModalCart
+-- cek apakah berhasil, berhasil
+15. selanjutnya buat button untuk simpan dan hapus
+-- sampe sini jumlah-nya masih 0, agar sama dengan yang telah di pesan sebelumnya yaitu caranya
+16. ke Checkout.js di handleShow ketikan jumlah: listKeranjang.jumlah, dan juga keterangan: listKeranjang.keterangan , dibacanya jadi ketika di handleShow(menampilkan ModalCart-nya) maka akan update jumlah dan keterangan-nya
+note : keterangan disini masih kosong tapi kalo udah ada isinya bisa di update
+-- cek apakah berhasil, berhasil
+-- sampe sini tombol plus minus belum bisa di pencet, karena blm dibikin aksinya, untuk bikinnya caranya yaitu.
+16. ke Checkout.js dibawahnya handleClose bikin function buttonPlus() dan buttonMinus(), namun di bagian function buttonMinus() harus dibuat if
+17. kemudian function tambah dan kurang di oper, ke bagian <ModalCart /> dan ketikan tambah={this.tambah}, dan kurang={this.kurang}
+18. ke ModalCart.js dan panggil fungsi buttonPlus dan buttonMinus di bagian const ModalCart
+19. function tambah dan kurang juga dipanggil dibagian tombol plus dan minus 
+-- cek, berhasil jika klik tambah maka jumlah pesan bertambah begitu juga sebaliknya
+-- selanjutnya buat agar keterangan bisa digunakan, caranya
+20. ke Checkout.js buat function changeHandler dan handleSUbmit
+21. ke ModalCart.js panggil changeHandler dan handleSUbmit di bagian const ModalCart
+22. kemudian di bagian keterangan <Form.Control/> ketikan onChange={(event) => changeHandler(event)}
+23. pada bagian button simpan ketikan onClick
+24. pada bagian <Form /> tambahkan onSubmit={handleSUbmit}
+25. ke halaman Checkout.js dan di bagian <ModalCart /> panggil changeHandler dan handleSUbmit
+25. di bagian function handleSUbmit buat console.log utk cek apakah datanya masuk
+-- cek, berhasil
+-- sampe sini ketika tombol plus dan minus nya di klik harganya blm terupdate, agar harga terupdate caranya yaitu:
+26. ke Checkout.js bikin state baru namanya totaHarga: 0, pada bagian constructor(props)
+-- kemudian akan update ketika user buka modalcart, caranya
+27. ke function handleShow, masukan totalHarga: listKeranjang.total_harga, total_harga sesuaiin dari API-nya
+-- selanjutnya ketika di klik tambah maka harganya akan update
+28. ke function tambah = (), ketikan totalHarga: this.state.keranjangDetail.product.harga*(this.state.jumlah + 1), keranjangDetail itu ngambil dari state-nta / constructor(props)
+-- selanjutnya ketika di klik kurang maka harganya akan update (berkurang)
+29. ke function kurang = (), cara sama dengan yg no 28 namun (+) diganti jadi (-), totalHarga: this.state.keranjangDetail.product.harga*(this.state.jumlah - 1)
+30. selanjutnya ke ModalCart.js dan panggil totaHarga di bagian const ModalCart
+31. selanjutnya ke <Form.Label>Total Harga :</Form.Label> dan dibagian <p> nya yang berisi  Rp. {numberWithCommas(keranjangDetail.total_harga)} diganti menjadi  Rp. {numberWithCommas(totalHarga)}
+-- cek, berhasil
+-- sampe sini ketika tombol plus dan minus di pencet yang jumlah pesanan di halaman checkout-nya blm ke ganti, untuk keganti caranya :
+32. ke Home.js, copy isi function addToCart dari const cart {} sampe .catch
+33. paste di handleSUbmit bawahnya console.log, ganti const cart menjadi const data{}
+35. edit juga isi const data dan tambahkan keterangan:
+36. .post-nya diganti menjadi .put karena kita mau buat fungsi untuk update, jadi seperti ini syntax-nya  .put(API_URL + 'keranjangs/' + this.state.keranjangDetail.id, data) ditambah (+) karna kita mau ambil id-nya
+37. ubah semua yg tadinya cart menjadi data
+38. import API_URL, axios dan swal
+-- cek, berhasil
+-- sampe sini, modal-nya tidak langsung nutup, untuk membuat auto tutup caranya :
+39. ke Checkout.js ke bagian handleSUbmit dan isikan di dalamnya this.handleClose
+-- selanjutnya bikin agar tombol hapus berfungsi
+40. ke Checkout.js, buat function hapusPesanan = (id), karena id nya yg bakal dihapus
+41. copy axios yg ada di dalam handleSUbmit, paste ke function hapusPesanan, ganti menjadi API_URL + 'keranjangs/' + id
+42. ganti alert-nya dengan yang warning, cari aja di google sweetalert
+43. ke <ModalCart /> dan oper hapusPesanan-nya, jadi hapusPesanan={this.hapusPesanan}
+44. ke ModalCart.js, panggil hapusPesanan di const ModalCart
+45. pada bagian button hapus-nya kasih onClick dan panggil hapusPesanan-nya, jadi syntax-nya onClick={() => hapusPesanan(kerangjangDetail.id)}, karena yg mau di hapus itu id dari kerangjangDetail
+-- cek, berhasil, pesanan terhapus
+
+-- sampai sini ketika pesanannya banyak maka akan tertiban dengan tombol bayar, untuk mehatasinya yaitu:
+1. ke Checkout.js diatasnya <listGroup> ketikan <Card>, dan bungkus listGroup-nya dengan <Card/>
+
+-- Selanjutnya untuk mengatasi infinite loop yaitu
+1. 
+
+
+
